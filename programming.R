@@ -90,31 +90,77 @@ f3 <- function(x, y) {
 
 # 1. What’s the difference between if and ifelse()? Carefully read the help and construct three examples 
 #   that illustrate the key differences.
+# If is for one value, ifelse is to fill a vector with values
+# Ifelse does not work for "verbs" only for "nouns"
+x <- runif(10)
+y1 <- ifelse(x < 0.5, 0, 1)
+
+for (i in 1:length(x)) {
+  if (x[i] < 0.5) {
+    y2[i] <- 0
+  } else {
+    y2[i] <- 1
+  } 
+}
 
 # 2. Write a greeting function that says “good morning”, “good afternoon”, or “good evening”, depending 
 #   on the time of day. (Hint: use a time argument that defaults to lubridate::now(). That will make it 
 #   easier to test your function.)
+greeting <- function(time_now = lubridate::now()) {
+  hour_now <- lubridate::hour(time_now)
+  
+  if (hour_now < 12) {
+    "good morning"
+  } else if (hour_now < 18) {
+    "good afternoon"
+  } else {
+    "good night"
+  }
+}
+
+greeting()
 
 # 3. How could you use cut() to simplify this set of nested if-else statements?
 
-if (temp <= 0) {
-  "freezing"
-} else if (temp <= 10) {
-  "cold"
-} else if (temp <= 20) {
-  "cool"
-} else if (temp <= 30) {
-  "warm"
-} else {
-  "hot"
+temp_original <- function(temp){
+  if (temp <= 0) {
+    "freezing"
+  } else if (temp <= 10) {
+    "cold"
+  } else if (temp <= 20) {
+    "cool"
+  } else if (temp <= 30) {
+    "warm"
+  } else {
+    "hot"
+  }
 }
+
+temp_mine <- function(temp) {
+  breaks <- c(-Inf, 0, 10, 20, 30, +Inf)
+  labels <- c("freezing", "cold", "cool", "warm", "hot")
+  cut(temp, breaks, labels)
+}
+
+temp_original(15)
+temp_mine(0)
+
 #   How would you change the call to cut() if I’d used < instead of <=? What is the other chief advantage of cut() 
 #   for this problem? (Hint: what happens if you have many values in temp?)
+# Use right = T switch
+# Cleaner code for many cut breaks
 
 # 4. What happens if you use switch() with numeric values?
+switch(5,
+       "g" = "baba",
+       "d" = "nana",
+       stop("other"))
+
+# If the integer is between 1 and nargs()-1 then the corresponding element of ... is evaluated and the 
+#   result returned: thus if the first argument is 3 then the fourth argument is evaluated and returned.
 
 # 5. What does this switch() call do? What happens if x is “e”?
-
+x <- "a"
 switch(x, 
        a = ,
        b = "ab",
@@ -122,3 +168,45 @@ switch(x,
        d = "cd"
 )
 #   Experiment, then carefully read the documentation.
+
+#  If there is a match then that element is evaluated unless it is missing, in which case the 
+#   next non-missing element is evaluated
+# . If there is more than one match, the first matching element is used. In the case of no match, 
+#   if there is a unnamed element of ... its value is returned.
+
+
+# Function arguments ------------------------------------------------------
+
+# 1. What does commas(letters, collapse = "-") do? Why?
+commas <- function(...) stringr::str_c(..., collapse = ", ")
+commas(letters[1:10])
+
+commas(letters, collapse = "-")
+# Error because of resetting collapse
+
+# 2. It’d be nice if you could supply multiple characters to the pad argument, e.g. rule("Title", pad = "-+"). 
+#   Why doesn’t this currently work? How could you fix it?
+rule <- function(..., pad = "-") {
+  title <- paste0(...)
+  width <- (getOption("width") - nchar(title) - 5)/stringr::str_length(pad)
+  cat(title, " ", stringr::str_dup(pad, width), "\n", sep = "")
+}
+
+rule("Title", pad = "-+")
+
+# 3. What does the trim argument to mean() do? When might you use it?
+# the fraction (0 to 0.5) of observations to be trimmed from each end of x before the mean is computed. 
+#   Values of trim outside that range are taken as the nearest endpoint.
+# Something else at the ends?
+
+# 4. The default value for the method argument to cor() is c("pearson", "kendall", "spearman"). 
+#   What does that mean? What value is used by default?
+# One of these three are accepted arguments, pearson is the default one
+
+
+# Returns and environment -------------------------------------------------
+# No exercises :(
+# Pipeability
+# Return: last expression by default
+# Invisible: return but don't print - good for piping!
+# Environment: searches for value "from inside to out"
