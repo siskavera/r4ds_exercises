@@ -72,13 +72,14 @@ flights_dt %>%
 
 # 2. Compare dep_time, sched_dep_time and dep_delay. Are they consistent? Explain your findings.
 flights_dt %>%
-  mutate(dep_diff = dep_time - sched_dep_time, diff_diff = as.numeric(dep_diff - dep_delay)) %>%
+  mutate(dep_diff = dep_time - sched_dep_time, diff_diff = as.numeric(dep_diff/60 - dep_delay)) %>%
   ggplot(aes(diff_diff)) +
   geom_bar() +
   coord_cartesian(xlim = c(-1000,10000))
 
-# Nope and I'm not really sure why. Maybe rounding? 
-#   Plus outliers are where dates are incorrect (scheduled in the evening, departed in the morning)
+# 
+#   The difference between the calculated delay and recorded delay is mostly 0, plus outliers are where dates are incorrect 
+# (scheduled in the evening, departed in the morning)
 
 # 3. Compare airtime with the duration between the departure and arrival. Explain your findings. 
 #   (Hint: consider the location of the airport.)
